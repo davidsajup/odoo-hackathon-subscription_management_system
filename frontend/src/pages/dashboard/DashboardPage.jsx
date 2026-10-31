@@ -162,7 +162,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="dashboard-columns">
-            <div className="card">
+            <div className="card scroll-x">
               <h2>Revenue by plan</h2>
               <p className="muted">Invoiced before tax, {formatDate(range.date_from)} – {formatDate(range.date_to)}</p>
               <table className="table spaced">
@@ -200,7 +200,7 @@ export default function DashboardPage() {
         </>
       )}
 
-      <div className="card">
+      <div className="card scroll-x">
         <div className="page-header">
           <h2>Overdue invoices to chase</h2>
           <Link to="/app/invoices">All invoices</Link>

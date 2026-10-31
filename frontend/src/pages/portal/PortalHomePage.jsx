@@ -53,7 +53,7 @@ export default function PortalHomePage() {
         </>
       )}
 
-      <div className="card">
+      <div className="card scroll-x">
         <div className="page-header">
           <h2>Recent invoices</h2>
           <Link to="/portal/invoices">All invoices</Link>

@@ -16,6 +16,16 @@ export const formatCount = (value) => new Intl.NumberFormat('en-IN').format(valu
 
 export const formatDate = (value) => (value ? dateFormatter.format(new Date(`${value}T00:00:00`)) : '—')
 
+const dateTimeFormatter = new Intl.DateTimeFormat('en-IN', {
+  day: '2-digit',
+  month: 'short',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+})
+
+export const formatDateTime = (value) => (value ? dateTimeFormatter.format(new Date(value)) : '—')
+
 const PERIOD_UNITS = { daily: 'day', weekly: 'week', monthly: 'month', yearly: 'year' }
 const PERIOD_LABELS = { daily: 'Daily', weekly: 'Weekly', monthly: 'Monthly', yearly: 'Yearly' }
 

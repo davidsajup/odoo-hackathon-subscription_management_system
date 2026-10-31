@@ -4,7 +4,7 @@ import api from '../../api/client'
 import { parseApiError } from '../../api/errors'
 import { useAuth } from '../../auth/useAuth'
 import { Alert, StatusBadge } from '../../components/ui'
-import { formatBillingPeriod, formatDate, formatMoney, fullName } from '../../format'
+import { formatBillingPeriod, formatDate, formatDateTime, formatMoney, fullName } from '../../format'
 import { useApiGet } from '../../hooks'
 import { invoiceStatus } from '../billing/labels'
 import { actionLabel, EVENT_LABELS, isDestructive, LIFECYCLE, PAYMENT_TERMS, stateInfo } from './labels'
@@ -27,7 +27,7 @@ function SubscriptionInvoices({ subscriptionId, portal, refreshKey }) {
   const invoices = data?.results ?? []
   const base = portal ? '/portal/invoices' : '/app/invoices'
   return (
-    <div className="card">
+    <div className="card scroll-x">
       <h2>Invoices</h2>
       {invoices.length === 0 ? (
         <p className="muted spaced">No invoices yet.</p>
@@ -263,7 +263,7 @@ export default function SubscriptionDetailPage({ portal = false }) {
               <strong>{EVENT_LABELS[event.action] ?? event.action}</strong>
               <span className="muted">
                 {' '}
-                by {event.user_name} · {new Date(event.created_at).toLocaleString('en-IN')}
+                by {event.user_name} · {formatDateTime(event.created_at)}
               </span>
               {event.note && <div className="muted">{event.note}</div>}
             </li>

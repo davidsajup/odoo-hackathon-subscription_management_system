@@ -4,7 +4,7 @@ import api from '../../api/client'
 import { parseApiError } from '../../api/errors'
 import { useAuth } from '../../auth/useAuth'
 import { Alert, FormField, Modal, StatusBadge } from '../../components/ui'
-import { formatDate, formatMoney } from '../../format'
+import { formatDate, formatDateTime, formatMoney } from '../../format'
 import { useApiGet, useForm, useSubmit } from '../../hooks'
 import { todayIso } from '../subscriptions/labels'
 import { INVOICE_ACTION_LABELS, invoiceStatus, PAYMENT_METHODS } from './labels'
@@ -170,13 +170,13 @@ export default function InvoiceDetailPage({ portal = false }) {
         {invoice.sent_at && (
           <div>
             <span className="detail-label">Last sent</span>
-            {new Date(invoice.sent_at).toLocaleString('en-IN')}
+            {formatDateTime(invoice.sent_at)}
           </div>
         )}
         {invoice.reminder_sent_at && (
           <div>
             <span className="detail-label">Last overdue reminder</span>
-            {new Date(invoice.reminder_sent_at).toLocaleString('en-IN')}
+            {formatDateTime(invoice.reminder_sent_at)}
           </div>
         )}
       </div>
@@ -240,7 +240,7 @@ export default function InvoiceDetailPage({ portal = false }) {
         </table>
       </div>
 
-      <div className="card">
+      <div className="card scroll-x">
         <h2>Payments</h2>
         {invoice.payments.length === 0 ? (
           <p className="muted spaced">No payments recorded yet.</p>
