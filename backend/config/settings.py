@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 
+from celery.schedules import crontab
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -169,7 +171,20 @@ DEFAULT_FROM_EMAIL = 'billing@brightloop.local'
 
 FRONTEND_URL = 'http://localhost:5173'
 
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'redis://localhost:6379/0')
+CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', 'redis://localhost:6379/0')
 CELERY_TIMEZONE = TIME_ZONE
-CELERY_BEAT_SCHEDULE = {}
+CELERY_BEAT_SCHEDULE = {
+    'close-expired-subscriptions': {
+        'task': 'subscriptions.tasks.close_expired_subscriptions',
+        'schedule': crontab(hour=0, minute=30),
+    },
+    'generate-due-invoices': {
+        'task': 'billing.tasks.generate_due_invoices',
+        'schedule': crontab(hour=1, minute=0),
+    },
+    'send-overdue-reminders': {
+        'task': 'billing.tasks.send_overdue_reminders',
+        'schedule': crontab(hour=9, minute=0),
+    },
+}

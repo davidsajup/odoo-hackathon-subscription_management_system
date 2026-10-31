@@ -61,7 +61,7 @@ class InvoiceSerializer(InvoiceListSerializer):
         fields = InvoiceListSerializer.Meta.fields + [
             'billing_email', 'billing_address', 'period_start', 'period_end', 'plan_name', 'discount_name',
             'amount_untaxed', 'amount_discount', 'amount_tax', 'lines', 'payments', 'confirmed_at', 'sent_at',
-            'paid_at', 'created_at', 'available_actions']
+            'paid_at', 'reminder_sent_at', 'created_at', 'available_actions']
 
     def get_available_actions(self, invoice):
         if not self.context['request'].user.is_internal:

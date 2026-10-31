@@ -91,6 +91,31 @@ def perform_action(subscription, name, user, note=''):
     return subscription
 
 
+def _system_close(subscription_id, allowed_states, note):
+    with transaction.atomic():
+        subscription = Subscription.objects.select_for_update().get(pk=subscription_id)
+        if subscription.state not in allowed_states:
+            return False
+        from_state = subscription.state
+        subscription.state = State.CLOSED
+        subscription.next_invoice_date = None
+        subscription.save()
+        SubscriptionEvent.objects.create(subscription=subscription, action='close', from_state=from_state,
+                                         to_state=State.CLOSED, note=note)
+    return True
+
+
+def close_expired(today=None):
+    today = today or timezone.localdate()
+    expired = Subscription.objects.filter(state__in=RUNNING_STATES, expiry_date__lt=today,
+                                          plan__auto_close=True).values_list('pk', flat=True)
+    stale_quotes = Subscription.objects.filter(state=State.QUOTATION,
+                                               quotation_valid_until__lt=today).values_list('pk', flat=True)
+    closed = sum(_system_close(pk, RUNNING_STATES, 'Closed automatically at expiry') for pk in expired)
+    expired_quotes = sum(_system_close(pk, {State.QUOTATION}, 'Quotation expired') for pk in stale_quotes)
+    return {'closed_subscriptions': closed, 'expired_quotations': expired_quotes}
+
+
 def default_unit_price(product, variant):
     return variant.price if variant else product.sales_price
 

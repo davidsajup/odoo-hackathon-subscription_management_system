@@ -198,6 +198,30 @@ def send_invoice_email(invoice):
     )
 
 
+REMINDER_INTERVAL = timedelta(days=7)
+
+
+def send_overdue_reminders(today=None):
+    today = today or timezone.localdate()
+    now = timezone.now()
+    overdue = (Invoice.objects.filter(state=Invoice.State.CONFIRMED, due_date__lt=today)
+               .filter(Q(reminder_sent_at__isnull=True) | Q(reminder_sent_at__lte=now - REMINDER_INTERVAL)))
+    sent = 0
+    for invoice in overdue:
+        days_late = (today - invoice.due_date).days
+        send_mail(
+            f'Reminder: invoice {invoice.number} is overdue',
+            f'Hello {invoice.billing_name},\n\nInvoice {invoice.number} was due on {invoice.due_date:%d %b %Y} '
+            f'({days_late} day{"s" if days_late != 1 else ""} ago). Amount still due: {invoice.amount_due}.\n\n'
+            f'View it online: {settings.FRONTEND_URL}/portal/invoices/{invoice.pk}',
+            None,
+            [invoice.billing_email],
+        )
+        Invoice.objects.filter(pk=invoice.pk).update(reminder_sent_at=now)
+        sent += 1
+    return {'reminders_sent': sent}
+
+
 def perform_invoice_action(invoice, name):
     with transaction.atomic():
         invoice = Invoice.objects.select_for_update().get(pk=invoice.pk)

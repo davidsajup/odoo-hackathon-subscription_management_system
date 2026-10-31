@@ -173,6 +173,12 @@ export default function InvoiceDetailPage({ portal = false }) {
             {new Date(invoice.sent_at).toLocaleString('en-IN')}
           </div>
         )}
+        {invoice.reminder_sent_at && (
+          <div>
+            <span className="detail-label">Last overdue reminder</span>
+            {new Date(invoice.reminder_sent_at).toLocaleString('en-IN')}
+          </div>
+        )}
       </div>
 
       <div className="table-wrap">
