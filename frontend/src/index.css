@@ -510,7 +510,149 @@ input:disabled {
   margin-bottom: 1rem;
 }
 
+/* Catalog */
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.9rem;
+}
+
+.checkbox-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.35rem 1rem;
+  max-height: 180px;
+  overflow-y: auto;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.9rem;
+}
+
+.checkbox input {
+  width: auto;
+}
+
+.table td.num,
+.table th.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.table td.wrap {
+  white-space: normal;
+}
+
+.table tr.clickable {
+  cursor: pointer;
+}
+
+.chip {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  margin: 0.1rem 0.3rem 0.1rem 0;
+  border-radius: 999px;
+  background: var(--brand-soft);
+  font-size: 0.85rem;
+}
+
+.chip em {
+  font-style: normal;
+  color: var(--brand);
+  font-weight: 600;
+}
+
+.badge-row {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.page-intro {
+  margin: -0.5rem 0 1rem;
+}
+
+.back-link {
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem 1.5rem;
+}
+
+.detail-wide {
+  grid-column: 1 / -1;
+  white-space: pre-wrap;
+}
+
+.detail-label {
+  display: block;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--muted);
+  margin-bottom: 0.15rem;
+}
+
+.price-preview {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  background: var(--brand-soft);
+}
+
+.price-preview strong {
+  font-size: 1.2rem;
+  color: var(--brand);
+}
+
+.value-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.value-row {
+  display: grid;
+  grid-template-columns: 1fr 130px auto;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.align-start {
+  align-self: flex-start;
+}
+
+.nav-heading {
+  margin: 0.9rem 0.75rem 0.25rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
 @media (max-width: 760px) {
+  .grid-3,
+  .checkbox-list {
+    grid-template-columns: 1fr;
+  }
+
+  .nav-heading {
+    display: none;
+  }
+
   .app-shell {
     grid-template-columns: 1fr;
   }

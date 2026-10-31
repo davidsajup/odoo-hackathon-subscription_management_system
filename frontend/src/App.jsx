@@ -8,12 +8,25 @@ import LoginPage from './pages/auth/LoginPage'
 import ResetPasswordPage from './pages/auth/ResetPasswordPage'
 import SignupPage from './pages/auth/SignupPage'
 import UserManagementPage from './pages/backoffice/UserManagementPage'
+import AttributesPage from './pages/catalog/AttributesPage'
+import DiscountsPage from './pages/catalog/DiscountsPage'
+import PlansPage from './pages/catalog/PlansPage'
+import ProductDetailPage from './pages/catalog/ProductDetailPage'
+import ProductsPage from './pages/catalog/ProductsPage'
+import TaxesPage from './pages/catalog/TaxesPage'
 import { BackofficeHomePage, NotFoundPage, PortalHomePage } from './pages/placeholders'
 import ProfilePage from './pages/ProfilePage'
 
 const BACKOFFICE_NAV = [
   { to: '/app', label: 'Dashboard', end: true },
   { to: '/app/customers', label: 'Customers' },
+  { heading: 'Catalog' },
+  { to: '/app/products', label: 'Products' },
+  { to: '/app/attributes', label: 'Attributes' },
+  { to: '/app/plans', label: 'Plans' },
+  { to: '/app/discounts', label: 'Discounts' },
+  { to: '/app/taxes', label: 'Taxes' },
+  { heading: 'Settings' },
   { to: '/app/staff', label: 'Staff', roles: ['admin'] },
   { to: '/app/profile', label: 'My profile' },
 ]
@@ -64,6 +77,12 @@ export default function App() {
                 </RequireRole>
               }
             />
+            <Route path="products" element={<ProductsPage />} />
+            <Route path="products/:id" element={<ProductDetailPage />} />
+            <Route path="attributes" element={<AttributesPage />} />
+            <Route path="plans" element={<PlansPage />} />
+            <Route path="discounts" element={<DiscountsPage />} />
+            <Route path="taxes" element={<TaxesPage />} />
             <Route path="profile" element={<ProfilePage />} />
           </Route>
 

@@ -21,11 +21,17 @@ export default function AppLayout({ navItems, variant }) {
           <span className="brand-mark">B</span> Brightloop
         </div>
         <nav>
-          {visibleItems.map((item) => (
-            <NavLink key={item.to} to={item.to} end={item.end} className="nav-link">
-              {item.label}
-            </NavLink>
-          ))}
+          {visibleItems.map((item) =>
+            item.heading ? (
+              <span key={item.heading} className="nav-heading">
+                {item.heading}
+              </span>
+            ) : (
+              <NavLink key={item.to} to={item.to} end={item.end} className="nav-link">
+                {item.label}
+              </NavLink>
+            ),
+          )}
         </nav>
       </aside>
       <div className="main">

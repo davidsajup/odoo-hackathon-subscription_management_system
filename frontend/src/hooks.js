@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import api from './api/client'
 import { parseApiError } from './api/errors'
 
 export function useForm(initialValues) {
@@ -37,4 +38,35 @@ export function useDebouncedValue(value, delay = 300) {
     return () => clearTimeout(timer)
   }, [value, delay])
   return debounced
+}
+
+export function useApiGet(endpoint, params = {}) {
+  const [reloadKey, setReloadKey] = useState(0)
+  const [state, setState] = useState({ key: null, data: null, error: null })
+  const key = JSON.stringify([endpoint, params, reloadKey])
+
+  useEffect(() => {
+    const [url, query] = JSON.parse(key)
+    if (!url) return undefined
+    let cancelled = false
+    api
+      .get(url, { params: query })
+      .then((response) => {
+        if (!cancelled) setState({ key, data: response.data, error: null })
+      })
+      .catch((err) => {
+        if (!cancelled) setState((current) => ({ ...current, key, error: parseApiError(err).message }))
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [key])
+
+  const reload = useCallback(() => setReloadKey((current) => current + 1), [])
+  return { data: state.data, error: state.error, loading: state.key !== key, reload }
+}
+
+export function useOptions(endpoint, params = {}) {
+  const { data } = useApiGet(endpoint, { page_size: 500, ...params })
+  return data?.results ?? []
 }
