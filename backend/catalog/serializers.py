@@ -125,10 +125,13 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class PlanSerializer(serializers.ModelSerializer):
+    tax_details = TaxSerializer(source='taxes', many=True, read_only=True)
+
     class Meta:
         model = Plan
         fields = ['id', 'name', 'price', 'billing_period', 'billing_interval', 'min_quantity', 'start_date',
-                  'end_date', 'auto_close', 'closable', 'pausable', 'renewable', 'description', 'is_active']
+                  'end_date', 'auto_close', 'closable', 'pausable', 'renewable', 'taxes', 'tax_details',
+                  'description', 'is_active']
 
     def validate(self, attrs):
         check_date_range(attrs, self.instance)

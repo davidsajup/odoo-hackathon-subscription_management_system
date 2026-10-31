@@ -1,10 +1,11 @@
 import { useAuth } from '../../auth/useAuth'
-import ResourceFormModal from '../../components/ResourceFormModal'
+import ResourceFormModal, { CheckboxList } from '../../components/ResourceFormModal'
 import { activeColumn } from '../../components/columns'
 import ResourceListPage from '../../components/ResourceListPage'
 import { FormField, StatusBadge } from '../../components/ui'
 import { formatBillingPeriod, formatDateRange, formatMoney } from '../../format'
-import { BILLING_PERIODS } from './labels'
+import { useOptions } from '../../hooks'
+import { BILLING_PERIODS, formatTax } from './labels'
 
 const ENDPOINT = '/catalog/plans/'
 const today = () => new Date().toLocaleDateString('en-CA')
@@ -20,6 +21,7 @@ const DEFAULTS = {
   closable: true,
   pausable: false,
   renewable: true,
+  taxes: [],
   description: '',
 }
 
@@ -31,6 +33,7 @@ const OPTIONS = [
 ]
 
 function PlanForm(props) {
+  const taxes = useOptions('/catalog/taxes/', { is_active: true })
   return (
     <ResourceFormModal
       endpoint={ENDPOINT}
@@ -42,7 +45,7 @@ function PlanForm(props) {
       })}
       {...props}
     >
-      {({ values, onChange, errors }) => (
+      {({ values, setValues, onChange, errors }) => (
         <>
           <FormField label="Name" error={errors.name}>
             <input name="name" value={values.name} onChange={onChange} required autoFocus placeholder="Pro Monthly" />
@@ -86,6 +89,14 @@ function PlanForm(props) {
               ))}
             </div>
           </div>
+          <FormField label="Taxes on the plan fee" error={errors.taxes}>
+            <CheckboxList
+              options={taxes}
+              selected={values.taxes}
+              onChange={(selected) => setValues((current) => ({ ...current, taxes: selected }))}
+              labelFor={(tax) => `${tax.name} (${formatTax(tax)})`}
+            />
+          </FormField>
           <FormField label="Description" error={errors.description}>
             <textarea name="description" rows={2} value={values.description} onChange={onChange} />
           </FormField>

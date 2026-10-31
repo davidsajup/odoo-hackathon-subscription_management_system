@@ -643,7 +643,142 @@ input:disabled {
   color: var(--muted);
 }
 
+/* Subscriptions */
+.btn-danger {
+  background: var(--surface);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: var(--danger-soft);
+}
+
+.alert-info {
+  background: var(--info-soft);
+  color: var(--info);
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.title-with-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.block {
+  display: block;
+  font-size: 0.85rem;
+}
+
+.status-bar {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.status-bar li {
+  flex: 1;
+  padding: 0.55rem 0.5rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--muted);
+  border-right: 1px solid var(--border);
+}
+
+.status-bar li:last-child {
+  border-right: none;
+}
+
+.status-bar li.done {
+  color: var(--brand);
+  background: var(--brand-soft);
+}
+
+.status-bar li.current {
+  color: #fff;
+  background: var(--brand);
+  font-weight: 600;
+}
+
+.table tfoot td {
+  border-bottom: none;
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+}
+
+.table tfoot tr:first-child td {
+  border-top: 1px solid var(--border);
+}
+
+.table .grand-total td {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.timeline {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.timeline li {
+  padding-left: 0.9rem;
+  border-left: 3px solid var(--brand-soft);
+}
+
+.line-editor td {
+  padding: 0.4rem 0.5rem;
+}
+
+.input-qty {
+  width: 80px;
+}
+
+.input-price {
+  width: 120px;
+}
+
+.form-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.estimate {
+  display: flex;
+  flex-direction: column;
+}
+
+.estimate strong {
+  font-size: 1.3rem;
+}
+
 @media (max-width: 760px) {
+  .status-bar {
+    flex-direction: column;
+  }
+
+  .status-bar li {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+
   .grid-3,
   .checkbox-list {
     grid-template-columns: 1fr;

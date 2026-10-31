@@ -56,7 +56,7 @@ class ProductVariantViewSet(CatalogViewSet):
 
 
 class PlanViewSet(CatalogViewSet):
-    queryset = Plan.objects.all()
+    queryset = Plan.objects.prefetch_related('taxes')
     serializer_class = PlanSerializer
     filterset_fields = ['billing_period', 'is_active']
     search_fields = ['name', 'description']

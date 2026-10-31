@@ -24,6 +24,8 @@ export default function ResourceListPage({
   toggleLabels = ['Archive', 'Restore'],
   renderForm,
   onRowClick,
+  headerActions,
+  showActiveFilter = true,
 }) {
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
@@ -68,11 +70,12 @@ export default function ResourceListPage({
     <section>
       <div className="page-header">
         <h1>{title}</h1>
-        {showActions && (
-          <button type="button" className="btn btn-primary" onClick={() => setEditing({})}>
-            Add {noun}
-          </button>
-        )}
+        {headerActions ??
+          (showActions && (
+            <button type="button" className="btn btn-primary" onClick={() => setEditing({})}>
+              Add {noun}
+            </button>
+          ))}
       </div>
 
       <div className="toolbar">
@@ -85,7 +88,7 @@ export default function ResourceListPage({
             setPage(1)
           }}
         />
-        {[...filters, ACTIVE_FILTER].map((filter) => (
+        {(showActiveFilter ? [...filters, ACTIVE_FILTER] : filters).map((filter) => (
           <select
             key={filter.name}
             aria-label={filter.label ?? 'Status'}

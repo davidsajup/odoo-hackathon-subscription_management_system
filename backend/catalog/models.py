@@ -126,6 +126,7 @@ class Plan(models.Model):
     closable = models.BooleanField(default=True)
     pausable = models.BooleanField(default=False)
     renewable = models.BooleanField(default=True)
+    taxes = models.ManyToManyField(Tax, blank=True, related_name='plans')
     description = models.TextField(blank=True)
     is_active = models.BooleanField(default=True, db_index=True)
 

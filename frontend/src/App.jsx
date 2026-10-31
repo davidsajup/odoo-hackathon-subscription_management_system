@@ -14,11 +14,19 @@ import PlansPage from './pages/catalog/PlansPage'
 import ProductDetailPage from './pages/catalog/ProductDetailPage'
 import ProductsPage from './pages/catalog/ProductsPage'
 import TaxesPage from './pages/catalog/TaxesPage'
+import PortalSubscriptionsPage from './pages/portal/PortalSubscriptionsPage'
+import SubscriptionDetailPage from './pages/subscriptions/SubscriptionDetailPage'
+import { EditSubscriptionPage, NewSubscriptionPage } from './pages/subscriptions/SubscriptionFormPage'
+import SubscriptionsPage from './pages/subscriptions/SubscriptionsPage'
+import TemplatesPage from './pages/subscriptions/TemplatesPage'
 import { BackofficeHomePage, NotFoundPage, PortalHomePage } from './pages/placeholders'
 import ProfilePage from './pages/ProfilePage'
 
 const BACKOFFICE_NAV = [
   { to: '/app', label: 'Dashboard', end: true },
+  { heading: 'Sales' },
+  { to: '/app/subscriptions', label: 'Subscriptions' },
+  { to: '/app/templates', label: 'Quotation templates' },
   { to: '/app/customers', label: 'Customers' },
   { heading: 'Catalog' },
   { to: '/app/products', label: 'Products' },
@@ -33,6 +41,7 @@ const BACKOFFICE_NAV = [
 
 const PORTAL_NAV = [
   { to: '/portal', label: 'Overview', end: true },
+  { to: '/portal/subscriptions', label: 'My subscriptions' },
   { to: '/portal/profile', label: 'My profile' },
 ]
 
@@ -77,6 +86,11 @@ export default function App() {
                 </RequireRole>
               }
             />
+            <Route path="subscriptions" element={<SubscriptionsPage />} />
+            <Route path="subscriptions/new" element={<NewSubscriptionPage />} />
+            <Route path="subscriptions/:id" element={<SubscriptionDetailPage key="backoffice" />} />
+            <Route path="subscriptions/:id/edit" element={<EditSubscriptionPage />} />
+            <Route path="templates" element={<TemplatesPage />} />
             <Route path="products" element={<ProductsPage />} />
             <Route path="products/:id" element={<ProductDetailPage />} />
             <Route path="attributes" element={<AttributesPage />} />
@@ -95,6 +109,8 @@ export default function App() {
             }
           >
             <Route index element={<PortalHomePage />} />
+            <Route path="subscriptions" element={<PortalSubscriptionsPage />} />
+            <Route path="subscriptions/:id" element={<SubscriptionDetailPage key="portal" portal />} />
             <Route path="profile" element={<ProfilePage />} />
           </Route>
 
