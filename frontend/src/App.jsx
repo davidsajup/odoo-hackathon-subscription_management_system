@@ -24,7 +24,9 @@ import SubscriptionDetailPage from './pages/subscriptions/SubscriptionDetailPage
 import { EditSubscriptionPage, NewSubscriptionPage } from './pages/subscriptions/SubscriptionFormPage'
 import SubscriptionsPage from './pages/subscriptions/SubscriptionsPage'
 import TemplatesPage from './pages/subscriptions/TemplatesPage'
-import { BackofficeHomePage, NotFoundPage, PortalHomePage } from './pages/placeholders'
+import DashboardPage from './pages/dashboard/DashboardPage'
+import { NotFoundPage } from './pages/placeholders'
+import PortalHomePage from './pages/portal/PortalHomePage'
 import ProfilePage from './pages/ProfilePage'
 
 const BACKOFFICE_NAV = [
@@ -82,7 +84,7 @@ export default function App() {
               </RequireRole>
             }
           >
-            <Route index element={<BackofficeHomePage />} />
+            <Route index element={<DashboardPage />} />
             <Route
               path="customers"
               element={<UserManagementPage key="customers" endpoint="/users/customers/" title="Customers" noun="customer" />}

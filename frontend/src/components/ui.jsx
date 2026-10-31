@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { Link } from 'react-router-dom'
 
 export function FormField({ label, error, hint, children }) {
   return (
@@ -64,6 +65,23 @@ export function Pagination({ page, count, pageSize = 25, onChange }) {
         Next
       </button>
     </div>
+  )
+}
+
+export function StatTile({ label, value, detail, to }) {
+  const body = (
+    <>
+      <span className="stat-label">{label}</span>
+      <span className="stat-value">{value}</span>
+      {detail && <span className="stat-detail">{detail}</span>}
+    </>
+  )
+  return to ? (
+    <Link to={to} className="stat-tile stat-link">
+      {body}
+    </Link>
+  ) : (
+    <div className="stat-tile">{body}</div>
   )
 }
 

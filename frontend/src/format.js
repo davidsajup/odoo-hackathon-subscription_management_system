@@ -1,7 +1,18 @@
 const moneyFormatter = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' })
 const dateFormatter = new Intl.DateTimeFormat('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
 
+const compactMoneyFormatter = new Intl.NumberFormat('en-IN', {
+  style: 'currency',
+  currency: 'INR',
+  notation: 'compact',
+  maximumFractionDigits: 1,
+})
+
 export const formatMoney = (value) => (value === null || value === undefined ? '—' : moneyFormatter.format(value))
+
+export const formatCompactMoney = (value) => compactMoneyFormatter.format(Number(value) || 0)
+
+export const formatCount = (value) => new Intl.NumberFormat('en-IN').format(value ?? 0)
 
 export const formatDate = (value) => (value ? dateFormatter.format(new Date(`${value}T00:00:00`)) : '—')
 
