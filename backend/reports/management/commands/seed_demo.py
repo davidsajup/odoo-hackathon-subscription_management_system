@@ -25,6 +25,14 @@ STATE_WEIGHTS = [
     (Subscription.State.ACTIVE, 70), (Subscription.State.PAUSED, 6), (Subscription.State.CLOSED, 9),
     (Subscription.State.QUOTATION, 6), (Subscription.State.CONFIRMED, 4), (Subscription.State.DRAFT, 5),
 ]
+DEMO_LOGINS = [
+    {'email': 'admin@brightloop.local', 'password': 'Brightloop#Admin1', 'role': User.Role.ADMIN,
+     'first_name': 'Ada', 'last_name': 'Admin'},
+    {'email': 'ravi@brightloop.local', 'password': 'Harbour#Lamp42', 'role': User.Role.STAFF,
+     'first_name': 'Ravi', 'last_name': 'Kumar'},
+    {'email': 'asha@smallshop.test', 'password': 'Shopper#2026x', 'role': User.Role.CUSTOMER,
+     'first_name': 'Asha', 'company_name': 'Small Shop'},
+]
 METHODS = [Payment.Method.BANK_TRANSFER, Payment.Method.UPI, Payment.Method.UPI, Payment.Method.CARD,
            Payment.Method.CHEQUE]
 
@@ -43,6 +51,8 @@ class Command(BaseCommand):
         self.today = timezone.localdate()
 
         with transaction.atomic():
+            for email in self.demo_logins():
+                self.stdout.write(f'Created login {email}')
             if options['reset']:
                 self.stdout.write(f'Removed {self.reset()} demo customers and their data.')
             elif User.objects.filter(email__startswith=EMAIL_PREFIX).exists():
@@ -56,6 +66,19 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(
             f'Created {len(customers)} customers, {len(subscriptions)} subscriptions, {invoices} invoices and '
             f'{payments} payments in {perf_counter() - started:.1f}s.'))
+
+    def demo_logins(self):
+        created = []
+        for login in DEMO_LOGINS:
+            if User.objects.filter(email=login['email']).exists():
+                continue
+            fields = {key: value for key, value in login.items() if key not in ('email', 'password')}
+            if login['role'] == User.Role.ADMIN:
+                User.objects.create_superuser(login['email'], login['password'], **fields)
+            else:
+                User.objects.create_user(login['email'], login['password'], **fields)
+            created.append(login['email'])
+        return created
 
     def reset(self):
         demo = User.objects.filter(email__startswith=EMAIL_PREFIX, email__endswith=EMAIL_DOMAIN)

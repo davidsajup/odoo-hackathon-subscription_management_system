@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import api from '../../api/client'
+import CustomerPicker from '../../components/CustomerPicker'
 import ResourceListPage from '../../components/ResourceListPage'
 import { Alert, FormField, Modal } from '../../components/ui'
 import { useOptions, useSubmit } from '../../hooks'
@@ -10,7 +11,6 @@ import { STATE_FILTER, SUBSCRIPTION_COLUMNS } from './listConfig'
 function FromTemplateModal({ onClose }) {
   const navigate = useNavigate()
   const templates = useOptions('/quotation-templates/', { is_active: true })
-  const customers = useOptions('/users/customers/', { is_active: true })
   const [values, setValues] = useState({ template: '', customer: '', start_date: todayIso() })
   const change = (e) => setValues((current) => ({ ...current, [e.target.name]: e.target.value }))
 
@@ -33,16 +33,11 @@ function FromTemplateModal({ onClose }) {
             ))}
           </select>
         </FormField>
-        <FormField label="Customer" error={error?.fields.customer}>
-          <select name="customer" value={values.customer} onChange={change} required>
-            <option value="">Choose…</option>
-            {customers.map((customer) => (
-              <option key={customer.id} value={customer.id}>
-                {customer.company_name || customer.email} {customer.company_name ? `(${customer.email})` : ''}
-              </option>
-            ))}
-          </select>
-        </FormField>
+        <div className={`field${error?.fields.customer ? ' has-error' : ''}`}>
+          <span className="field-label">Customer</span>
+          <CustomerPicker onChange={(id) => setValues((current) => ({ ...current, customer: id }))} />
+          {error?.fields.customer && <span className="field-error">{error.fields.customer}</span>}
+        </div>
         <FormField label="Start date" error={error?.fields.start_date}>
           <input type="date" name="start_date" value={values.start_date} onChange={change} required />
         </FormField>

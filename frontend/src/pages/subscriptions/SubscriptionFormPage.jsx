@@ -1,5 +1,6 @@
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import api from '../../api/client'
+import CustomerPicker from '../../components/CustomerPicker'
 import { Alert, FormField } from '../../components/ui'
 import { formatBillingPeriod, formatMoney } from '../../format'
 import { useApiGet, useForm, useOptions, useSubmit } from '../../hooks'
@@ -36,7 +37,6 @@ function initialValues(subscription) {
 
 function SubscriptionForm({ subscription }) {
   const navigate = useNavigate()
-  const customers = useOptions('/users/customers/', { is_active: true })
   const plans = useOptions('/catalog/plans/', { is_active: true })
   const products = useOptions('/catalog/products/', { is_active: true })
   const { values, setValues, onChange } = useForm(initialValues(subscription))
@@ -80,16 +80,15 @@ function SubscriptionForm({ subscription }) {
 
       <div className="card stack">
         <div className="grid-2">
-          <FormField label="Customer" error={errors.customer}>
-            <select name="customer" value={values.customer} onChange={onChange} required autoFocus>
-              <option value="">Choose…</option>
-              {customers.map((customer) => (
-                <option key={customer.id} value={customer.id}>
-                  {customer.company_name || customer.email} {customer.company_name ? `(${customer.email})` : ''}
-                </option>
-              ))}
-            </select>
-          </FormField>
+          <div className={`field${errors.customer ? ' has-error' : ''}`}>
+            <span className="field-label">Customer</span>
+            <CustomerPicker
+              initial={subscription?.customer_detail ?? null}
+              autoFocus={!subscription}
+              onChange={(id) => setValues((current) => ({ ...current, customer: id }))}
+            />
+            {errors.customer && <span className="field-error">{errors.customer}</span>}
+          </div>
           <FormField label="Payment terms" error={errors.payment_terms_days}>
             <select name="payment_terms_days" value={values.payment_terms_days} onChange={onChange}>
               {PAYMENT_TERMS.map((term) => (

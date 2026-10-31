@@ -99,3 +99,16 @@ class SeedDemoTests(BillingTestCase):
         self.assertEqual(demo.count(), 60)
         self.assertEqual(User.objects.filter(email__startswith='demo-customer-').count(), 12)
         self.assertTrue(Subscription.objects.filter(pk=mine.pk).exists())
+
+    def test_seed_creates_readme_logins_once(self):
+        call_command('seed_demo', '--subscriptions', '5', stdout=StringIO())
+        self.assertTrue(self.client.login(email='admin@brightloop.local', password='Brightloop#Admin1'))
+        self.assertEqual(User.objects.get(email='admin@brightloop.local').role, User.Role.ADMIN)
+        self.assertEqual(User.objects.get(email='ravi@brightloop.local').role, User.Role.STAFF)
+        self.assertEqual(User.objects.get(email='asha@smallshop.test').role, User.Role.CUSTOMER)
+
+        User.objects.filter(email='ravi@brightloop.local').update(first_name='Changed')
+        out = StringIO()
+        call_command('seed_demo', '--subscriptions', '5', '--reset', stdout=out)
+        self.assertNotIn('Created login', out.getvalue())
+        self.assertEqual(User.objects.get(email='ravi@brightloop.local').first_name, 'Changed')
