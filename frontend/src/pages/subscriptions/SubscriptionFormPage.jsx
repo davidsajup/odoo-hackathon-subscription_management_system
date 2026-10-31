@@ -2,8 +2,9 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import api from '../../api/client'
 import CustomerPicker from '../../components/CustomerPicker'
 import { Alert, FormField } from '../../components/ui'
+import { useToast } from '../../components/useToast'
 import { formatBillingPeriod, formatMoney } from '../../format'
-import { useApiGet, useForm, useOptions, useSubmit } from '../../hooks'
+import { useApiGet, useForm, useOptions, usePageTitle, useSubmit } from '../../hooks'
 import { addDays, catalogPrice, PAYMENT_TERMS, toLinePayload, todayIso } from './labels'
 import ProductLinesEditor from './ProductLinesEditor'
 
@@ -36,6 +37,8 @@ function initialValues(subscription) {
 }
 
 function SubscriptionForm({ subscription }) {
+  usePageTitle(subscription ? `Edit ${subscription.number}` : 'New subscription')
+  const toast = useToast()
   const navigate = useNavigate()
   const plans = useOptions('/catalog/plans/', { is_active: true })
   const products = useOptions('/catalog/products/', { is_active: true })
@@ -56,6 +59,7 @@ function SubscriptionForm({ subscription }) {
     const response = subscription
       ? await api.patch(`/subscriptions/${subscription.id}/`, payload)
       : await api.post('/subscriptions/', payload)
+    toast(`${response.data.number} saved`)
     navigate(`/app/subscriptions/${response.data.id}`)
   })
 

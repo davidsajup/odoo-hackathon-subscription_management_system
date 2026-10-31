@@ -40,6 +40,12 @@ export function useDebouncedValue(value, delay = 300) {
   return debounced
 }
 
+export function usePageTitle(title) {
+  useEffect(() => {
+    document.title = title ? `${title} · Brightloop` : 'Brightloop Billing'
+  }, [title])
+}
+
 export function useApiGet(endpoint, params = {}, refreshKey = 0) {
   const [reloadKey, setReloadKey] = useState(0)
   const [state, setState] = useState({ key: null, data: null, error: null })

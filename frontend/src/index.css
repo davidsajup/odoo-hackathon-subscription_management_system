@@ -3,7 +3,7 @@
   --brand-dark: #5a3a52;
   --brand-soft: #f3edf2;
   --text: #1f2430;
-  --muted: #6b7280;
+  --muted: #596273;
   --border: #e3e5ea;
   --bg: #f6f7f9;
   --surface: #ffffff;
@@ -120,8 +120,39 @@ textarea {
 input:focus,
 select:focus,
 textarea:focus {
-  outline: 2px solid var(--brand-soft);
+  outline: 2px solid var(--brand);
+  outline-offset: 0;
   border-color: var(--brand);
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+.table tr.clickable:focus-visible {
+  outline-offset: -2px;
+}
+
+.skip-link {
+  position: absolute;
+  left: 0.75rem;
+  top: -4rem;
+  z-index: 200;
+  padding: 0.5rem 0.9rem;
+  border-radius: 6px;
+  background: var(--brand);
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  top: 0.75rem;
+}
+
+#main:focus {
+  outline: none;
 }
 
 input:disabled {
@@ -330,6 +361,11 @@ input:disabled {
 }
 
 .sidebar {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: 100vh;
+  overflow-y: auto;
   background: var(--surface);
   border-right: 1px solid var(--border);
   padding: 1.25rem 0.85rem;
@@ -438,6 +474,11 @@ input:disabled {
   border-collapse: collapse;
 }
 
+.table-wrap.is-loading {
+  opacity: 0.55;
+  transition: opacity 0.15s;
+}
+
 .table th,
 .table td {
   padding: 0.65rem 0.9rem;
@@ -460,6 +501,61 @@ input:disabled {
 
 .table tbody tr:hover {
   background: #fafbfc;
+}
+
+.check-cell {
+  width: 2.25rem;
+  padding-right: 0;
+}
+
+.check-cell input {
+  width: auto;
+  cursor: pointer;
+}
+
+.table tbody tr.selected {
+  background: var(--brand-soft);
+}
+
+.bulk-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  padding: 0.55rem 0.85rem;
+  border: 1px solid var(--brand);
+  border-radius: var(--radius);
+  background: var(--brand-soft);
+}
+
+.th-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  text-transform: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.th-sort:hover {
+  color: var(--text);
+}
+
+.sort-icon {
+  font-size: 0.7rem;
+  opacity: 0.55;
+}
+
+th[aria-sort='ascending'] .sort-icon,
+th[aria-sort='descending'] .sort-icon {
+  opacity: 1;
+  color: var(--brand);
 }
 
 .table .empty {
@@ -655,6 +751,15 @@ input:disabled {
   background: var(--danger-soft);
 }
 
+.btn-danger-solid {
+  background: var(--danger);
+  color: #fff;
+}
+
+.btn-danger-solid:hover:not(:disabled) {
+  background: #a93226;
+}
+
 .alert-info {
   background: var(--info-soft);
   color: var(--info);
@@ -768,6 +873,69 @@ input:disabled {
 
 .estimate strong {
   font-size: 1.3rem;
+}
+
+/* Toasts */
+.toasts {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: min(380px, calc(100vw - 2rem));
+}
+
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.18);
+  font-size: 0.9rem;
+  animation: toast-in 0.18s ease-out;
+}
+
+.toast span {
+  flex: 1;
+}
+
+.toast-success {
+  background: var(--success-soft);
+  border-color: #b7e2cb;
+  color: var(--success);
+}
+
+.toast-error {
+  background: var(--danger-soft);
+  border-color: #f3c4bd;
+  color: var(--danger);
+}
+
+.toast-close {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    animation: none;
+  }
 }
 
 /* Customer picker */
@@ -1003,7 +1171,7 @@ path.series-2 {
 
 .chart-tick {
   font-size: 11px;
-  fill: #898781;
+  fill: #6b6a65;
   font-variant-numeric: tabular-nums;
 }
 
@@ -1165,6 +1333,9 @@ path.series-2 {
   }
 
   .sidebar {
+    position: static;
+    height: auto;
+    overflow-y: visible;
     min-width: 0;
     border-right: none;
     border-bottom: 1px solid var(--border);

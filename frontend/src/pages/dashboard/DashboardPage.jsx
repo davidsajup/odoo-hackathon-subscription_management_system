@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import RevenueChart from '../../components/RevenueChart'
 import { Alert, StatTile, StatusBadge } from '../../components/ui'
 import { formatCompactMoney, formatCount, formatDate, formatMoney } from '../../format'
-import { useApiGet, useOptions } from '../../hooks'
+import { useApiGet, useOptions, usePageTitle } from '../../hooks'
 import { addDays, STATES, todayIso } from '../subscriptions/labels'
 
 function presetRange(preset) {
@@ -49,6 +49,7 @@ function SubscriptionStates({ byState, total }) {
 }
 
 export default function DashboardPage() {
+  usePageTitle('Dashboard')
   const [preset, setPreset] = useState('this_month')
   const [custom, setCustom] = useState(presetRange('this_month'))
   const [plan, setPlan] = useState('')
@@ -114,7 +115,7 @@ export default function DashboardPage() {
               label="Active subscriptions"
               value={formatCount(summary.subscriptions.active)}
               detail={`${summary.subscriptions.new_in_period} new · ${summary.subscriptions.closed_in_period} closed in period`}
-              to="/app/subscriptions"
+              to="/app/subscriptions?state=active"
             />
             <StatTile label="Monthly recurring revenue" value={formatCompactMoney(summary.mrr)} detail={`${formatMoney(summary.mrr)} before tax`} />
             <StatTile
@@ -133,7 +134,7 @@ export default function DashboardPage() {
               label="Outstanding"
               value={formatCompactMoney(summary.outstanding.total)}
               detail={`${formatCount(summary.outstanding.count)} unpaid invoices`}
-              to="/app/invoices"
+              to="/app/invoices?state=confirmed"
             />
             <StatTile
               label="Overdue"
@@ -145,7 +146,7 @@ export default function DashboardPage() {
                   'Nothing overdue'
                 )
               }
-              to="/app/invoices"
+              to="/app/invoices?overdue=true"
             />
           </div>
 
@@ -203,7 +204,7 @@ export default function DashboardPage() {
       <div className="card scroll-x">
         <div className="page-header">
           <h2>Overdue invoices to chase</h2>
-          <Link to="/app/invoices">All invoices</Link>
+          <Link to="/app/invoices?overdue=true">All overdue invoices</Link>
         </div>
         <table className="table">
           <thead>

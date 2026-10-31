@@ -11,23 +11,23 @@ const statusColumn = {
 }
 
 export const INVOICE_COLUMNS = [
-  { label: 'Number', key: 'number' },
+  { label: 'Number', key: 'number', sort: 'number' },
   { label: 'Customer', key: 'billing_name' },
   { label: 'Subscription', key: 'subscription_number' },
-  { label: 'Date', render: (row) => formatDate(row.invoice_date) },
-  { label: 'Due', render: (row) => formatDate(row.due_date) },
-  { label: 'Total', render: (row) => formatMoney(row.amount_total), className: 'num' },
-  { label: 'Amount due', render: (row) => formatMoney(row.amount_due), className: 'num' },
+  { label: 'Date', render: (row) => formatDate(row.invoice_date), sort: 'invoice_date' },
+  { label: 'Due', render: (row) => formatDate(row.due_date), sort: 'due_date' },
+  { label: 'Total', render: (row) => formatMoney(row.amount_total), className: 'num', sort: 'amount_total' },
+  { label: 'Amount due', render: (row) => formatMoney(row.amount_due), className: 'num', sort: 'amount_due' },
   statusColumn,
 ]
 
 export const PORTAL_INVOICE_COLUMNS = [
-  { label: 'Number', key: 'number' },
+  { label: 'Number', key: 'number', sort: 'number' },
   { label: 'Subscription', key: 'subscription_number' },
-  { label: 'Date', render: (row) => formatDate(row.invoice_date) },
-  { label: 'Due', render: (row) => formatDate(row.due_date) },
-  { label: 'Total', render: (row) => formatMoney(row.amount_total), className: 'num' },
-  { label: 'Amount due', render: (row) => formatMoney(row.amount_due), className: 'num' },
+  { label: 'Date', render: (row) => formatDate(row.invoice_date), sort: 'invoice_date' },
+  { label: 'Due', render: (row) => formatDate(row.due_date), sort: 'due_date' },
+  { label: 'Total', render: (row) => formatMoney(row.amount_total), className: 'num', sort: 'amount_total' },
+  { label: 'Amount due', render: (row) => formatMoney(row.amount_due), className: 'num', sort: 'amount_due' },
   statusColumn,
 ]
 

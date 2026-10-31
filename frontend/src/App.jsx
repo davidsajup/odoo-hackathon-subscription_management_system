@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import AuthProvider from './auth/AuthProvider'
 import { GuestOnly, RequireRole, RootRedirect } from './auth/guards'
+import ToastProvider from './components/ToastProvider'
 import AppLayout from './layouts/AppLayout'
 import AuthLayout from './layouts/AuthLayout'
 import ForgotPasswordPage from './pages/auth/ForgotPasswordPage'
@@ -60,6 +61,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+        <ToastProvider>
         <Routes>
           <Route
             element={
@@ -141,6 +143,7 @@ export default function App() {
           <Route path="/" element={<RootRedirect />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
+        </ToastProvider>
       </AuthProvider>
     </BrowserRouter>
   )

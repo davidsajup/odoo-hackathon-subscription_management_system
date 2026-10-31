@@ -55,9 +55,9 @@ export function ProductForm(props) {
 }
 
 const COLUMNS = [
-  { label: 'Name', key: 'name' },
+  { label: 'Name', key: 'name', sort: 'name' },
   { label: 'Type', render: (row) => productTypeLabel(row.product_type) },
-  { label: 'Sales price', render: (row) => formatMoney(row.sales_price), className: 'num' },
+  { label: 'Sales price', render: (row) => formatMoney(row.sales_price), className: 'num', sort: 'sales_price' },
   { label: 'Cost price', render: (row) => formatMoney(row.cost_price), className: 'num' },
   { label: 'Taxes', render: (row) => row.tax_details.map((tax) => tax.name).join(', ') || '—' },
   { label: 'Variants', render: (row) => row.variants.length || '—', className: 'num' },

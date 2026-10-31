@@ -4,18 +4,21 @@ import api from '../../api/client'
 import CustomerPicker from '../../components/CustomerPicker'
 import ResourceListPage from '../../components/ResourceListPage'
 import { Alert, FormField, Modal } from '../../components/ui'
+import { useToast } from '../../components/useToast'
 import { useOptions, useSubmit } from '../../hooks'
 import { todayIso } from './labels'
 import { STATE_FILTER, SUBSCRIPTION_COLUMNS } from './listConfig'
 
 function FromTemplateModal({ onClose }) {
   const navigate = useNavigate()
+  const toast = useToast()
   const templates = useOptions('/quotation-templates/', { is_active: true })
   const [values, setValues] = useState({ template: '', customer: '', start_date: todayIso() })
   const change = (e) => setValues((current) => ({ ...current, [e.target.name]: e.target.value }))
 
   const { submit, submitting, error } = useSubmit(async () => {
     const response = await api.post('/subscriptions/from-template/', values)
+    toast(`${response.data.number} created from template`)
     navigate(`/app/subscriptions/${response.data.id}`)
   })
 

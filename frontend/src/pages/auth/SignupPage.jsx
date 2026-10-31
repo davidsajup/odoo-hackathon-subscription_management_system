@@ -3,9 +3,10 @@ import PasswordChecklist from '../../auth/PasswordChecklist'
 import { passwordIsValid } from '../../auth/passwordRules'
 import { homePathFor, useAuth } from '../../auth/useAuth'
 import { Alert, FormField } from '../../components/ui'
-import { useForm, useSubmit } from '../../hooks'
+import { useForm, usePageTitle, useSubmit } from '../../hooks'
 
 export default function SignupPage() {
+  usePageTitle('Create account')
   const { signup } = useAuth()
   const navigate = useNavigate()
   const { values, onChange } = useForm({

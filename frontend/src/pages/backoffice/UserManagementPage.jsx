@@ -41,9 +41,9 @@ function UserForm({ endpoint, noun, item, onClose, onSaved }) {
 }
 
 const COLUMNS = [
-  { label: 'Name', render: (row) => fullName(row) || '—' },
-  { label: 'Email', key: 'email' },
-  { label: 'Company', render: (row) => row.company_name || '—' },
+  { label: 'Name', render: (row) => fullName(row) || '—', sort: 'first_name' },
+  { label: 'Email', key: 'email', sort: 'email' },
+  { label: 'Company', render: (row) => row.company_name || '—', sort: 'company_name' },
   { label: 'Phone', render: (row) => row.phone || '—' },
   activeColumn(['Active', 'Inactive']),
 ]

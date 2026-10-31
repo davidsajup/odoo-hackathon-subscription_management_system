@@ -16,6 +16,16 @@ export default function AppLayout({ navItems, variant }) {
 
   return (
     <div className={`app-shell app-${variant}`}>
+      <a
+        href="#main"
+        className="skip-link"
+        onClick={(event) => {
+          event.preventDefault()
+          document.getElementById('main')?.focus()
+        }}
+      >
+        Skip to content
+      </a>
       <aside className="sidebar">
         <div className="brand">
           <span className="brand-mark">B</span> Brightloop
@@ -44,7 +54,7 @@ export default function AppLayout({ navItems, variant }) {
             Log out
           </button>
         </header>
-        <main className="content">
+        <main id="main" tabIndex={-1} className="content">
           <Outlet />
         </main>
       </div>

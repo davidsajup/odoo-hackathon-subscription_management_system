@@ -2,11 +2,12 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../../auth/useAuth'
 import { Alert, StatTile, StatusBadge } from '../../components/ui'
 import { formatCount, formatDate, formatMoney } from '../../format'
-import { useApiGet } from '../../hooks'
+import { useApiGet, usePageTitle } from '../../hooks'
 import { invoiceStatus } from '../billing/labels'
 
 export default function PortalHomePage() {
   const { user } = useAuth()
+  usePageTitle('Overview')
   const { data: summary, error } = useApiGet('/reports/my-summary/')
   const { data: invoices } = useApiGet('/invoices/', { page_size: 5 })
 
@@ -28,13 +29,13 @@ export default function PortalHomePage() {
               label="Active subscriptions"
               value={formatCount(summary.active_subscriptions)}
               detail={summary.paused_subscriptions ? `${summary.paused_subscriptions} paused` : null}
-              to="/portal/subscriptions"
+              to="/portal/subscriptions?state=active"
             />
             <StatTile
               label="Amount due"
               value={formatMoney(summary.amount_due.total)}
               detail={`${formatCount(summary.amount_due.count)} unpaid invoice${summary.amount_due.count === 1 ? '' : 's'}`}
-              to="/portal/invoices"
+              to="/portal/invoices?state=confirmed"
             />
             <StatTile
               label="Overdue"
@@ -46,7 +47,7 @@ export default function PortalHomePage() {
                   'Nothing overdue'
                 )
               }
-              to="/portal/invoices"
+              to="/portal/invoices?overdue=true"
             />
             <StatTile label="Next invoice" value={formatDate(summary.next_invoice_date)} />
           </div>

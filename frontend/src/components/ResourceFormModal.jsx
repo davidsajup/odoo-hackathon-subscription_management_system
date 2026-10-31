@@ -1,6 +1,7 @@
 import api from '../api/client'
 import { useForm, useSubmit } from '../hooks'
 import { Alert, Modal } from './ui'
+import { useToast } from './useToast'
 
 export default function ResourceFormModal({
   endpoint,
@@ -13,11 +14,13 @@ export default function ResourceFormModal({
   children,
 }) {
   const isNew = !item.id
+  const toast = useToast()
   const { values, setValues, onChange } = useForm({ ...defaults, ...item })
 
   const { submit, submitting, error } = useSubmit(async () => {
     const payload = toPayload(values)
     const response = isNew ? await api.post(endpoint, payload) : await api.patch(`${endpoint}${item.id}/`, payload)
+    toast(`${noun.charAt(0).toUpperCase()}${noun.slice(1)} ${isNew ? 'added' : 'updated'}`)
     onSaved(response.data)
   })
 

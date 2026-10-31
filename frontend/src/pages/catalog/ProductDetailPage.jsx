@@ -6,7 +6,7 @@ import { useAuth } from '../../auth/useAuth'
 import ResourceFormModal from '../../components/ResourceFormModal'
 import { Alert, FormField, StatusBadge } from '../../components/ui'
 import { formatMoney } from '../../format'
-import { useApiGet, useOptions } from '../../hooks'
+import { useApiGet, useOptions, usePageTitle } from '../../hooks'
 import { formatTax, productTypeLabel } from './labels'
 import { ProductForm } from './ProductsPage'
 
@@ -71,6 +71,7 @@ export default function ProductDetailPage() {
   const isAdmin = user.role === 'admin'
   const { data: product, error, reload } = useApiGet(`/catalog/products/${id}/`)
   const attributes = useOptions('/catalog/attributes/')
+  usePageTitle(product?.name ?? 'Product')
   const [modal, setModal] = useState(null)
   const [actionError, setActionError] = useState(null)
 

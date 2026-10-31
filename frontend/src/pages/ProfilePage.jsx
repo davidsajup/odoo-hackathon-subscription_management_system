@@ -1,12 +1,13 @@
-import { useState } from 'react'
 import api from '../api/client'
 import { useAuth } from '../auth/useAuth'
 import { Alert, FormField } from '../components/ui'
-import { useForm, useSubmit } from '../hooks'
+import { useToast } from '../components/useToast'
+import { useForm, usePageTitle, useSubmit } from '../hooks'
 
 export default function ProfilePage() {
+  usePageTitle('My profile')
   const { user, setUser } = useAuth()
-  const [saved, setSaved] = useState(false)
+  const toast = useToast()
   const { values, onChange } = useForm({
     first_name: user.first_name,
     last_name: user.last_name,
@@ -16,10 +17,9 @@ export default function ProfilePage() {
   })
 
   const { submit, submitting, error } = useSubmit(async () => {
-    setSaved(false)
     const response = await api.patch('/auth/me/', values)
     setUser(response.data)
-    setSaved(true)
+    toast('Profile saved')
   })
 
   return (
@@ -27,7 +27,6 @@ export default function ProfilePage() {
       <h1>My profile</h1>
       <form onSubmit={submit} className="stack card">
         <Alert>{error?.message}</Alert>
-        <Alert kind="success">{saved && 'Profile saved.'}</Alert>
         <FormField label="Email" hint="Contact support to change your login email.">
           <input value={user.email} disabled />
         </FormField>

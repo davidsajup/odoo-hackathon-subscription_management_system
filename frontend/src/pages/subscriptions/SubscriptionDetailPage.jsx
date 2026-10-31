@@ -4,8 +4,10 @@ import api from '../../api/client'
 import { parseApiError } from '../../api/errors'
 import { useAuth } from '../../auth/useAuth'
 import { Alert, StatusBadge } from '../../components/ui'
+import { useConfirm } from '../../components/useConfirm'
+import { useToast } from '../../components/useToast'
 import { formatBillingPeriod, formatDate, formatDateTime, formatMoney, fullName } from '../../format'
-import { useApiGet } from '../../hooks'
+import { useApiGet, usePageTitle } from '../../hooks'
 import { invoiceStatus } from '../billing/labels'
 import { actionLabel, EVENT_LABELS, isDestructive, LIFECYCLE, PAYMENT_TERMS, stateInfo } from './labels'
 
@@ -86,17 +88,29 @@ export default function SubscriptionDetailPage({ portal = false }) {
   const { data: subscription, error, reload } = useApiGet(`/subscriptions/${id}/`)
   const [busy, setBusy] = useState(null)
   const [actionError, setActionError] = useState(null)
+  const { confirm, dialog } = useConfirm()
+  const toast = useToast()
+  usePageTitle(subscription?.number ?? 'Subscription')
 
   if (error) return <Alert>{error}</Alert>
   if (!subscription) return <p className="muted">Loading…</p>
 
   const runAction = async (action) => {
     const label = actionLabel(action, subscription.state, isCustomer)
-    if (isDestructive(action) && !window.confirm(`${label} ${subscription.number}? This cannot be undone.`)) return
+    if (isDestructive(action)) {
+      const confirmed = await confirm({
+        title: `${label}?`,
+        message: `${label} ${subscription.number}. This cannot be undone.`,
+        confirmLabel: label,
+        danger: true,
+      })
+      if (!confirmed) return
+    }
     setBusy(action)
     setActionError(null)
     try {
       await api.post(`/subscriptions/${subscription.id}/actions/${action}/`)
+      toast(`${subscription.number}: ${EVENT_LABELS[action] ?? action}`)
       reload()
     } catch (err) {
       setActionError(parseApiError(err).message)
@@ -110,6 +124,7 @@ export default function SubscriptionDetailPage({ portal = false }) {
     setActionError(null)
     try {
       const response = await api.post(`/subscriptions/${subscription.id}/invoice/`)
+      toast(`Invoice ${response.data.number} created`)
       navigate(`/app/invoices/${response.data.id}`)
     } catch (err) {
       setActionError(parseApiError(err).message)
@@ -118,9 +133,16 @@ export default function SubscriptionDetailPage({ portal = false }) {
   }
 
   const deleteDraft = async () => {
-    if (!window.confirm(`Delete draft ${subscription.number}?`)) return
+    const confirmed = await confirm({
+      title: 'Delete draft?',
+      message: `Delete draft ${subscription.number}. This cannot be undone.`,
+      confirmLabel: 'Delete',
+      danger: true,
+    })
+    if (!confirmed) return
     try {
       await api.delete(`/subscriptions/${subscription.id}/`)
+      toast('Draft deleted')
       navigate(basePath)
     } catch (err) {
       setActionError(parseApiError(err).message)
@@ -270,6 +292,7 @@ export default function SubscriptionDetailPage({ portal = false }) {
           ))}
         </ul>
       </div>
+      {dialog}
     </section>
   )
 }

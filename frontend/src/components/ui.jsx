@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 export function FormField({ label, error, hint, children }) {
@@ -21,16 +21,56 @@ export function Alert({ kind = 'error', children }) {
   )
 }
 
+const FOCUSABLE =
+  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+
 export function Modal({ title, onClose, children }) {
+  const dialogRef = useRef(null)
+  const [opener] = useState(() => document.activeElement)
+
   useEffect(() => {
     const handleKey = (event) => event.key === 'Escape' && onClose()
     window.addEventListener('keydown', handleKey)
     return () => window.removeEventListener('keydown', handleKey)
   }, [onClose])
 
+  useEffect(() => {
+    const dialog = dialogRef.current
+    if (!dialog.contains(document.activeElement)) {
+      const first = dialog.querySelector('input, select, textarea') ?? dialog.querySelector(FOCUSABLE)
+      first?.focus()
+    }
+    return () => {
+      if (opener?.isConnected && opener !== document.body) opener.focus()
+    }
+  }, [opener])
+
+  const keepFocusInside = (event) => {
+    if (event.key !== 'Tab') return
+    const items = [...dialogRef.current.querySelectorAll(FOCUSABLE)]
+    if (items.length === 0) return event.preventDefault()
+    const first = items[0]
+    const last = items[items.length - 1]
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault()
+      last.focus()
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault()
+      first.focus()
+    }
+  }
+
   return (
     <div className="modal-backdrop" onMouseDown={onClose}>
-      <div className="modal" role="dialog" aria-modal="true" aria-label={title} onMouseDown={(e) => e.stopPropagation()}>
+      <div
+        ref={dialogRef}
+        className="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
+        onMouseDown={(e) => e.stopPropagation()}
+        onKeyDown={keepFocusInside}
+      >
         <div className="modal-header">
           <h2>{title}</h2>
           <button type="button" className="btn-icon" onClick={onClose} aria-label="Close">

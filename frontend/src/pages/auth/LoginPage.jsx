@@ -1,9 +1,10 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { homePathFor, useAuth } from '../../auth/useAuth'
 import { Alert, FormField } from '../../components/ui'
-import { useForm, useSubmit } from '../../hooks'
+import { useForm, usePageTitle, useSubmit } from '../../hooks'
 
 export default function LoginPage() {
+  usePageTitle('Log in')
   const { login } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()

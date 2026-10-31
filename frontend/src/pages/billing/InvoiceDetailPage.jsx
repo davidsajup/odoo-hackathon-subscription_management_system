@@ -4,10 +4,18 @@ import api from '../../api/client'
 import { parseApiError } from '../../api/errors'
 import { useAuth } from '../../auth/useAuth'
 import { Alert, FormField, Modal, StatusBadge } from '../../components/ui'
+import { useConfirm } from '../../components/useConfirm'
+import { useToast } from '../../components/useToast'
 import { formatDate, formatDateTime, formatMoney } from '../../format'
-import { useApiGet, useForm, useSubmit } from '../../hooks'
+import { useApiGet, useForm, usePageTitle, useSubmit } from '../../hooks'
 import { todayIso } from '../subscriptions/labels'
 import { INVOICE_ACTION_LABELS, invoiceStatus, PAYMENT_METHODS } from './labels'
+
+const SUCCESS_MESSAGES = {
+  confirm: (invoice) => `${invoice.number} confirmed`,
+  cancel: (invoice) => `${invoice.number} cancelled`,
+  send: (invoice) => `${invoice.number} emailed to ${invoice.billing_email}`,
+}
 
 function PaymentModal({ invoice, onClose, onSaved }) {
   const { values, onChange } = useForm({
@@ -66,20 +74,30 @@ export default function InvoiceDetailPage({ portal = false }) {
   const { data: invoice, error, reload } = useApiGet(`/invoices/${id}/`)
   const [busy, setBusy] = useState(null)
   const [actionError, setActionError] = useState(null)
-  const [notice, setNotice] = useState(null)
   const [paying, setPaying] = useState(false)
+  const { confirm, dialog } = useConfirm()
+  const toast = useToast()
+  usePageTitle(invoice?.number ?? 'Invoice')
 
   if (error) return <Alert>{error}</Alert>
   if (!invoice) return <p className="muted">Loading…</p>
 
   const runAction = async (action) => {
-    if (action === 'cancel' && !window.confirm(`Cancel ${invoice.number}? This cannot be undone.`)) return
+    if (action === 'cancel') {
+      const confirmed = await confirm({
+        title: 'Cancel invoice?',
+        message: `Cancel ${invoice.number}. This cannot be undone.`,
+        confirmLabel: 'Cancel invoice',
+        cancelLabel: 'Keep invoice',
+        danger: true,
+      })
+      if (!confirmed) return
+    }
     setBusy(action)
     setActionError(null)
-    setNotice(null)
     try {
       await api.post(`/invoices/${invoice.id}/actions/${action}/`)
-      if (action === 'send') setNotice(`Invoice emailed to ${invoice.billing_email}.`)
+      toast(SUCCESS_MESSAGES[action](invoice))
       reload()
     } catch (err) {
       setActionError(parseApiError(err).message)
@@ -89,9 +107,17 @@ export default function InvoiceDetailPage({ portal = false }) {
   }
 
   const deletePayment = async (payment) => {
-    if (!window.confirm(`Delete the ${formatMoney(payment.amount)} payment?`)) return
+    const confirmed = await confirm({
+      title: 'Delete payment?',
+      message: `Delete the ${formatMoney(payment.amount)} payment. The invoice amount due will go back up.`,
+      confirmLabel: 'Delete payment',
+      cancelLabel: 'Keep payment',
+      danger: true,
+    })
+    if (!confirmed) return
     try {
       await api.delete(`/payments/${payment.id}/`)
+      toast('Payment deleted')
       reload()
     } catch (err) {
       setActionError(parseApiError(err).message)
@@ -137,7 +163,6 @@ export default function InvoiceDetailPage({ portal = false }) {
       </div>
 
       <Alert>{actionError}</Alert>
-      <Alert kind="success">{notice}</Alert>
 
       <div className="card detail-grid">
         <div>
@@ -284,10 +309,12 @@ export default function InvoiceDetailPage({ portal = false }) {
           onClose={() => setPaying(false)}
           onSaved={() => {
             setPaying(false)
+            toast('Payment recorded')
             reload()
           }}
         />
       )}
+      {dialog}
     </section>
   )
 }

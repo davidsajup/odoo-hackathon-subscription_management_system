@@ -4,13 +4,13 @@ import { formatDate, formatMoney } from '../../format'
 import { PAYMENT_METHODS } from './labels'
 
 const COLUMNS = [
-  { label: 'Date', render: (row) => formatDate(row.payment_date) },
+  { label: 'Date', render: (row) => formatDate(row.payment_date), sort: 'payment_date' },
   { label: 'Invoice', key: 'invoice_number' },
   { label: 'Customer', key: 'customer_name' },
   { label: 'Method', key: 'method_display' },
   { label: 'Note', render: (row) => row.note || '—' },
   { label: 'Recorded by', render: (row) => row.recorded_by_name || '—' },
-  { label: 'Amount', render: (row) => formatMoney(row.amount), className: 'num' },
+  { label: 'Amount', render: (row) => formatMoney(row.amount), className: 'num', sort: 'amount' },
 ]
 
 export default function PaymentsPage() {

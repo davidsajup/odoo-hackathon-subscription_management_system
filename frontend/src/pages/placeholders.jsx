@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom'
+import { usePageTitle } from '../hooks'
 
 export function NotFoundPage() {
+  usePageTitle('Page not found')
   return (
     <div className="auth-shell">
       <div className="auth-card stack">

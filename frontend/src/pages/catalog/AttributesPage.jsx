@@ -3,7 +3,7 @@ import { useAuth } from '../../auth/useAuth'
 import ResourceFormModal from '../../components/ResourceFormModal'
 import { Alert, FormField } from '../../components/ui'
 import { formatMoney } from '../../format'
-import { useApiGet } from '../../hooks'
+import { useApiGet, usePageTitle } from '../../hooks'
 
 const ENDPOINT = '/catalog/attributes/'
 
@@ -76,6 +76,7 @@ function AttributeForm(props) {
 }
 
 export default function AttributesPage() {
+  usePageTitle('Attributes')
   const { user } = useAuth()
   const isAdmin = user.role === 'admin'
   const { data, error, reload } = useApiGet(ENDPOINT, { page_size: 500 })

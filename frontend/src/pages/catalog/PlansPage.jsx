@@ -114,8 +114,8 @@ const RULE_BADGES = [
 ]
 
 const COLUMNS = [
-  { label: 'Name', key: 'name' },
-  { label: 'Price', render: (row) => formatMoney(row.price), className: 'num' },
+  { label: 'Name', key: 'name', sort: 'name' },
+  { label: 'Price', render: (row) => formatMoney(row.price), className: 'num', sort: 'price' },
   { label: 'Billing', render: (row) => formatBillingPeriod(row.billing_period, row.billing_interval) },
   { label: 'Min qty', key: 'min_quantity', className: 'num' },
   { label: 'Available', render: (row) => formatDateRange(row.start_date, row.end_date) },

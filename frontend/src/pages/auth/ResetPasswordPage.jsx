@@ -4,9 +4,10 @@ import api from '../../api/client'
 import PasswordChecklist from '../../auth/PasswordChecklist'
 import { passwordIsValid } from '../../auth/passwordRules'
 import { Alert, FormField } from '../../components/ui'
-import { useForm, useSubmit } from '../../hooks'
+import { useForm, usePageTitle, useSubmit } from '../../hooks'
 
 export default function ResetPasswordPage() {
+  usePageTitle('Set a new password')
   const { uid, token } = useParams()
   const { values, onChange } = useForm({ password: '', confirm: '' })
   const [doneMessage, setDoneMessage] = useState(null)

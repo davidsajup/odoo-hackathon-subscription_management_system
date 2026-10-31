@@ -216,6 +216,21 @@ class InvoiceActionTests(BillingTestCase):
         self.assertEqual(response.data['confirmed'], 3)
         self.assertFalse(Invoice.objects.filter(state=Invoice.State.DRAFT).exists())
 
+    def test_bulk_confirm_only_the_selected_drafts(self):
+        invoices = [self.invoice_for(self.make_subscription()) for _ in range(3)]
+        already_confirmed = services.perform_invoice_action(invoices[2], 'confirm')
+
+        response = self.client.post('/api/invoices/bulk-confirm/',
+                                    {'ids': [invoices[0].pk, already_confirmed.pk]})
+        self.assertEqual(response.data['confirmed'], 1)
+        states = {invoice.pk: Invoice.objects.get(pk=invoice.pk).state for invoice in invoices}
+        self.assertEqual(states[invoices[0].pk], Invoice.State.CONFIRMED)
+        self.assertEqual(states[invoices[1].pk], Invoice.State.DRAFT)
+
+        self.assertEqual(self.client.post('/api/invoices/bulk-confirm/', {'ids': []}).status_code, 400)
+        self.client.force_authenticate(self.customer)
+        self.assertEqual(self.client.post('/api/invoices/bulk-confirm/', {'ids': [invoices[1].pk]}).status_code, 403)
+
     def test_create_invoice_from_subscription_endpoint(self):
         subscription = self.make_subscription()
         detail = self.client.get(f'/api/subscriptions/{subscription.pk}/')

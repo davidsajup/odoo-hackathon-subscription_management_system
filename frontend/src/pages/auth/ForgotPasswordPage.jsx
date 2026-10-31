@@ -2,9 +2,10 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../../api/client'
 import { Alert, FormField } from '../../components/ui'
-import { useSubmit } from '../../hooks'
+import { usePageTitle, useSubmit } from '../../hooks'
 
 export default function ForgotPasswordPage() {
+  usePageTitle('Reset password')
   const [email, setEmail] = useState('')
   const [sentMessage, setSentMessage] = useState(null)
 
