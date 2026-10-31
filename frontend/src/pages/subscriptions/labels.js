@@ -47,6 +47,7 @@ export const EVENT_LABELS = {
   resume: 'Resumed',
   renew: 'Renewed',
   close: 'Closed',
+  invoice: 'Invoiced',
 }
 
 export const addDays = (isoDate, days) => {

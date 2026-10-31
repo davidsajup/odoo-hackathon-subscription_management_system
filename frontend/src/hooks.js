@@ -40,10 +40,10 @@ export function useDebouncedValue(value, delay = 300) {
   return debounced
 }
 
-export function useApiGet(endpoint, params = {}) {
+export function useApiGet(endpoint, params = {}, refreshKey = 0) {
   const [reloadKey, setReloadKey] = useState(0)
   const [state, setState] = useState({ key: null, data: null, error: null })
-  const key = JSON.stringify([endpoint, params, reloadKey])
+  const key = JSON.stringify([endpoint, params, reloadKey, refreshKey])
 
   useEffect(() => {
     const [url, query] = JSON.parse(key)

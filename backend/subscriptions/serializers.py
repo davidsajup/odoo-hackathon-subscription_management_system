@@ -1,7 +1,9 @@
 from django.db import transaction
+from django.utils import timezone
 from rest_framework import serializers
 
 from accounts.models import User
+from billing.services import is_due
 from catalog.models import Plan, Product, ProductVariant
 from catalog.serializers import TaxSerializer
 
@@ -140,18 +142,22 @@ class SubscriptionSerializer(serializers.ModelSerializer):
     plan_quantity = serializers.IntegerField(min_value=1, required=False)
     product_lines = ProductLineInputSerializer(many=True, write_only=True, required=False)
     available_actions = serializers.SerializerMethodField()
+    can_invoice = serializers.SerializerMethodField()
 
     class Meta:
         model = Subscription
         fields = ['id', 'number', 'customer', 'customer_detail', 'plan', 'plan_detail', 'template', 'template_name',
                   'state', 'start_date', 'expiry_date', 'next_invoice_date', 'payment_terms_days',
                   'quotation_valid_until', 'notes', 'amount_untaxed', 'amount_tax', 'amount_total', 'plan_quantity',
-                  'lines', 'product_lines', 'events', 'available_actions', 'created_at']
+                  'lines', 'product_lines', 'events', 'available_actions', 'can_invoice', 'created_at']
         read_only_fields = ['number', 'template', 'state', 'next_invoice_date', 'amount_untaxed', 'amount_tax',
                             'amount_total', 'created_at']
 
     def get_available_actions(self, subscription):
         return services.available_actions(subscription, self.context['request'].user)
+
+    def get_can_invoice(self, subscription):
+        return self.context['request'].user.is_internal and is_due(subscription, timezone.localdate())
 
     def to_representation(self, subscription):
         data = super().to_representation(subscription)

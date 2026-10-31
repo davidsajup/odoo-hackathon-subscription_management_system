@@ -26,6 +26,8 @@ export default function ResourceListPage({
   onRowClick,
   headerActions,
   showActiveFilter = true,
+  refreshKey = 0,
+  notice,
 }) {
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
@@ -35,11 +37,11 @@ export default function ResourceListPage({
   const debouncedSearch = useDebouncedValue(search)
 
   const activeFilters = Object.fromEntries(Object.entries(filterValues).filter(([, value]) => value !== ''))
-  const { data, error, loading, reload } = useApiGet(endpoint, {
-    page,
-    search: debouncedSearch || undefined,
-    ...activeFilters,
-  })
+  const { data, error, loading, reload } = useApiGet(
+    endpoint,
+    { page, search: debouncedSearch || undefined, ...activeFilters },
+    refreshKey,
+  )
   const rows = data?.results ?? []
 
   const closeForm = useCallback(() => setEditing(null), [])
@@ -104,6 +106,7 @@ export default function ResourceListPage({
         ))}
       </div>
 
+      {notice}
       <Alert>{error || actionError}</Alert>
 
       <div className="table-wrap">

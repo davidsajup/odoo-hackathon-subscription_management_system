@@ -6,6 +6,7 @@ import { useAuth } from '../../auth/useAuth'
 import { Alert, StatusBadge } from '../../components/ui'
 import { formatBillingPeriod, formatDate, formatMoney, fullName } from '../../format'
 import { useApiGet } from '../../hooks'
+import { invoiceStatus } from '../billing/labels'
 import { actionLabel, EVENT_LABELS, isDestructive, LIFECYCLE, PAYMENT_TERMS, stateInfo } from './labels'
 
 function StatusBar({ state }) {
@@ -18,6 +19,52 @@ function StatusBar({ state }) {
         </li>
       ))}
     </ol>
+  )
+}
+
+function SubscriptionInvoices({ subscriptionId, portal, refreshKey }) {
+  const { data } = useApiGet('/invoices/', { subscription: subscriptionId, page_size: 100 }, refreshKey)
+  const invoices = data?.results ?? []
+  const base = portal ? '/portal/invoices' : '/app/invoices'
+  return (
+    <div className="card">
+      <h2>Invoices</h2>
+      {invoices.length === 0 ? (
+        <p className="muted spaced">No invoices yet.</p>
+      ) : (
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Number</th>
+              <th>Date</th>
+              <th>Due</th>
+              <th className="num">Total</th>
+              <th className="num">Amount due</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {invoices.map((invoice) => {
+              const status = invoiceStatus(invoice)
+              return (
+                <tr key={invoice.id}>
+                  <td>
+                    <Link to={`${base}/${invoice.id}`}>{invoice.number}</Link>
+                  </td>
+                  <td>{formatDate(invoice.invoice_date)}</td>
+                  <td>{formatDate(invoice.due_date)}</td>
+                  <td className="num">{formatMoney(invoice.amount_total)}</td>
+                  <td className="num">{formatMoney(invoice.amount_due)}</td>
+                  <td>
+                    <StatusBadge tone={status.tone}>{status.label}</StatusBadge>
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      )}
+    </div>
   )
 }
 
@@ -54,6 +101,18 @@ export default function SubscriptionDetailPage({ portal = false }) {
     } catch (err) {
       setActionError(parseApiError(err).message)
     } finally {
+      setBusy(null)
+    }
+  }
+
+  const createInvoice = async () => {
+    setBusy('invoice')
+    setActionError(null)
+    try {
+      const response = await api.post(`/subscriptions/${subscription.id}/invoice/`)
+      navigate(`/app/invoices/${response.data.id}`)
+    } catch (err) {
+      setActionError(parseApiError(err).message)
       setBusy(null)
     }
   }
@@ -100,6 +159,11 @@ export default function SubscriptionDetailPage({ portal = false }) {
           {!isCustomer && subscription.state === 'draft' && (
             <button type="button" className="btn btn-secondary" onClick={deleteDraft}>
               Delete
+            </button>
+          )}
+          {subscription.can_invoice && (
+            <button type="button" className="btn btn-primary" disabled={busy !== null} onClick={createInvoice}>
+              {busy === 'invoice' ? 'Invoicing…' : 'Create invoice'}
             </button>
           )}
           {subscription.available_actions.map((action) => (
@@ -188,6 +252,8 @@ export default function SubscriptionDetailPage({ portal = false }) {
           </tfoot>
         </table>
       </div>
+
+      <SubscriptionInvoices subscriptionId={subscription.id} portal={portal} refreshKey={subscription.next_invoice_date} />
 
       <div className="card">
         <h2>History</h2>

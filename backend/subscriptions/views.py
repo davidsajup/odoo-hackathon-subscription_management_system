@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from accounts.permissions import IsAdminOrStaffReadOnly, IsStaffOrAdmin
+from billing import services as billing_services
 from catalog.views import CatalogViewSet
 
 from . import services
@@ -81,6 +82,15 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
         except services.TransitionError as exc:
             raise ValidationError(str(exc))
         return self.detail_response(subscription)
+
+    @action(detail=True, methods=['post'], url_path='invoice', permission_classes=[IsStaffOrAdmin])
+    def create_invoice(self, request, pk=None):
+        subscription = self.get_object()
+        try:
+            invoice = billing_services.generate_invoice(subscription.pk, user=request.user)
+        except billing_services.BillingError as exc:
+            raise ValidationError(str(exc))
+        return Response({'id': invoice.pk, 'number': invoice.number}, status=status.HTTP_201_CREATED)
 
     @action(detail=False, methods=['post'], url_path='from-template')
     def from_template(self, request):

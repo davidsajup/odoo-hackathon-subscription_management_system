@@ -769,7 +769,110 @@ input:disabled {
   font-size: 1.3rem;
 }
 
+/* Billing */
+.spaced {
+  margin-top: 0.75rem;
+}
+
+.pre-wrap {
+  white-space: pre-wrap;
+}
+
+.print-page {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  background: var(--surface);
+  min-height: 100vh;
+}
+
+.print-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+.print-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 2px solid var(--brand);
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.print-title {
+  text-align: right;
+}
+
+.print-title h1 {
+  margin: 0;
+}
+
+.print-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.print-table,
+.print-totals {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.print-table th,
+.print-table td {
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+
+.print-table .num,
+.print-totals .num {
+  text-align: right;
+}
+
+.print-totals {
+  width: 50%;
+  margin: 1rem 0 0 auto;
+}
+
+.print-totals td {
+  padding: 0.35rem 0.5rem;
+}
+
+.print-totals .strong td {
+  font-weight: 700;
+  border-top: 1px solid var(--border);
+}
+
+@media print {
+  body,
+  .print-page {
+    background: #fff;
+  }
+
+  .no-print {
+    display: none;
+  }
+
+  .print-page {
+    padding: 0;
+  }
+}
+
 @media (max-width: 760px) {
+  .print-meta {
+    grid-template-columns: 1fr;
+  }
+
+  .print-totals {
+    width: 100%;
+  }
+
   .status-bar {
     flex-direction: column;
   }
